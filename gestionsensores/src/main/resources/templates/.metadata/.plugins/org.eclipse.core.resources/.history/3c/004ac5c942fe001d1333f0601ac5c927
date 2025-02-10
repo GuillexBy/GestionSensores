@@ -1,0 +1,229 @@
+package retrofit.restaurantes;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.bson.types.ObjectId;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import restaurantes.modelo.Restaurante;
+import restaurantes.modelo.SitioTuristico;
+import retrofit.restaurantes.Listado.ResumenExtendido;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+import servicio.FindNearbyService;
+
+public class Programa {
+
+	private static final String TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiNDNhYmFlZC01OTQxLTRhMjgtOGEwNi1iOWNkZDdiZDc0ZjMiLCJpc3MiOiJQYXNhcmVsYSBadXVsIiwiZXhwIjoxNjg0NjYxMzkxLCJzdWIiOiJHdWlsbGV4QnkiLCJ1c3VhcmlvIjoiZ3VpbGxlQHVtLmVzIiwicm9sIjoiR0VTVE9SIn0.HTG-Yc-c5BHieqwTDL0y_86P7ObETwkwjzovPbP1SHY";
+	
+	public static void main(String[] args) throws Exception {
+
+//		HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+//        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//
+		Interceptor interceptor = new Interceptor() {
+
+			@Override
+			public okhttp3.Response intercept(Chain arg0) throws IOException {
+				Request request = arg0.request();
+				
+				Request.Builder requestBuilder = request.newBuilder().header("Authorization", TOKEN);
+				
+				Request definitiva = requestBuilder.build();
+				return arg0.proceed(definitiva);
+			}
+			
+		};
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build();
+        
+		FindNearbyService servicioSitios = new FindNearbyService();
+		
+		// Se especifica el punto de acceso
+		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8080/api/")
+				.addConverterFactory(JacksonConverterFactory.create())
+				.client(client)
+				//.client(client)
+				.build();
+				
+		RestaurantesRestCliente service = retrofit.create(RestaurantesRestCliente.class);
+
+		// Creación
+
+		// 1. Creación de una actividad
+
+		
+		Restaurante restaurante = new Restaurante();
+		
+		restaurante.setGestor("guille@um.es");
+		restaurante.setLatitud(2.0);
+		restaurante.setLongitud(2.0);
+		restaurante.setNombre("El bar del alexxqwerx");
+		//restaurante.setId(new ObjectId().toString());
+		// Creacion de un nuevo restaurante:
+		
+		Response<Void> resultado = service.createRestaurante(restaurante).execute();
+		System.out.println(resultado.toString());
+//
+//		// Recuperación
+//
+//		Restaurante r = service.getRestaurante(restaurante.getId()).execute().body();
+//		System.out.println("Restaurante recuperado...");
+//		System.out.println(r.toString());
+//
+//		// Actualizacion de restaurante
+//		
+//		System.out.println("Actualizacion de restaurante");
+//		r.setGestor("JoseDi");
+//
+//		Response<Void> updateCall = service.updateRestaurante(r.getId(), r).execute();
+//		System.out.println(updateCall.toString());
+//
+//		// Borrar restaurante
+//		System.out.println("Borrado de restaurante");
+//		Response<Void> updateCall2 = service.deleteRestaurante(r.getId()).execute();
+//		System.out.println(updateCall2.toString());
+//
+//		Restaurante r2 = new Restaurante();
+//
+//		r2.setGestor("Nuevo2");
+//		r2.setLatitud(20.0);
+//		r2.setLongitud(20.0);
+//		r2.setNombre("NOVO2");
+//		r2.setId(new ObjectId().toString());
+//		Response<Void> resultado2 = service.createRestaurante(r2).execute();
+//		
+//		// Listado
+//
+//		Listado listado = service.getListado().execute().body();
+//
+//		System.out.println("Listado:");
+//		for (ResumenExtendido actividadResumen : listado.getRestaurante()) {
+//			System.out.println("\t" + actividadResumen.getResumen().getNombre());
+//			System.out.println("\t" + actividadResumen.getUrl());
+//		}
+//
+//		System.out.println("fin.");
+//		
+//		// Añadir plato al restaurante
+//		
+//		System.out.println();
+//		
+//		Response<Void> resupuesta3 = service.addPlatoAlRestaurante("6447b2a61710d36989290c97", "primer plato", "descripcion", 1.0).execute();
+//		System.out.println(resupuesta3);
+//		
+//		//Update plato
+//		
+//		resupuesta3 = service.updatePlato("6447b2a61710d36989290c97", "primer plato", "Nueva descripcion", 20.0).execute();
+//		System.out.println(resupuesta3);
+//		
+//		// Borrar plato del restuarante
+//		
+//		//resupuesta3 = service.deletePlato("6447b2a61710d36989290c97","primer plato").execute();
+//		//System.out.println(resupuesta3);
+//		
+//		
+//		
+//		// Prueba de Sitios turisiticos       
+//		List<SitioTuristico> sitios = servicioSitios.findNearbyCoords(40,40);
+//		Response<Void> resupuesta4 = service.setSitiosTuristicos("6447b2a61710d36989290c97",sitios).execute();
+//		System.out.println(resupuesta4);
+//		
+//		
+//		// Obtener los sitios turisticos:
+//		
+//		List<SitioTuristico> sitios2 = service.getSitiosTuristicos("6447b2a61710d36989290c97").execute().body();
+//		for(SitioTuristico s : sitios2) {
+//			System.out.println(s.toString());
+//		}
+
+		String url1 = resultado.headers().get("Location");
+//
+		String id1 = url1.substring(url1.lastIndexOf("/") + 1);
+//		restaurante.setId(id1);
+//		System.out.println(restaurante.getId());
+//		// Recuperación
+//
+//		Restaurante r = service.getRestaurante(restaurante.getId()).execute().body();
+//		System.out.println("Restaurante recuperado...");
+//		System.out.println(r.toString());
+//
+//		// Actualizacion de restaurante
+//		
+//		System.out.println("Actualizacion de restaurante");
+//		r.setNombre("El bar del nacho");
+//
+//		Response<Void> updateCall = service.updateRestaurante(r.getId(), r).execute();
+//		System.out.println(updateCall.toString());
+//
+//		// Borrar restaurante
+//		System.out.println("Borrado de restaurante");
+//		Response<Void> updateCall2 = service.deleteRestaurante(r.getId()).execute();
+//		System.out.println(updateCall2.toString());
+
+		Restaurante r2 = new Restaurante();
+
+		r2.setGestor("guille@um.es");
+		r2.setLatitud(20.0);
+		r2.setLongitud(20.0);
+		r2.setNombre("NOVO2");
+		r2.setId(new ObjectId().toString());
+		Response<Void> resultado2 = service.createRestaurante(r2).execute();
+		
+		url1 = resultado2.headers().get("Location");
+
+		id1 = url1.substring(url1.lastIndexOf("/") + 1);
+		
+		r2.setId(id1);
+		// Listado
+
+		Listado listado = service.getListado().execute().body();
+
+		System.out.println("Listado:");
+		for (ResumenExtendido actividadResumen : listado.getRestaurante()) {
+			System.out.println("\t" + actividadResumen.getResumen().getNombre());
+			System.out.println("\t" + actividadResumen.getUrl());
+		}
+
+		System.out.println("fin.");
+		
+		// Añadir plato al restaurante
+		
+		System.out.println();
+		
+		Response<Void> resupuesta3 = service.addPlatoAlRestaurante(r2.getId(), "primer plato", "descripcion", 1.0).execute();
+		System.out.println(resupuesta3);
+		
+		//Update plato
+		
+		Response<Void> resupuesta4 = service.updatePlato(r2.getId(), "primer plato", "Nueva descripcion", 20.0).execute();
+		System.out.println(resupuesta4);
+		
+		// Borrar plato del restuarante
+		
+		Response<Void> resupuesta5 = service.deletePlato(r2.getId(),"primer plato").execute();
+		System.out.println(resupuesta5);
+		
+		
+		
+		// Prueba de Sitios turisiticos       
+		List<SitioTuristico> sitios = servicioSitios.findNearbyCoords(40,40);
+		Response<Void> resupuesta6 = service.setSitiosTuristicos(r2.getId(),sitios).execute();
+		System.out.println(resupuesta6);
+		
+		
+		// Obtener los sitios turisticos:
+		
+		List<SitioTuristico> sitios2 = service.getSitiosTuristicos(r2.getId()).execute().body();
+		for(SitioTuristico s : sitios2) {
+			System.out.println(s.toString());
+		}
+		
+
+	}
+}

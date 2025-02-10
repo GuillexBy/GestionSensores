@@ -1,0 +1,28 @@
+type Opinion {
+  id: String!
+  recurso: String!
+  valoraciones: [Valoracion]
+}
+
+type Valoracion {
+  email: String!
+  fechaRegistro: String! # dd-MM-yy:Thh:mm
+  calificacion: Int!
+  comentario: String
+}
+
+type Query {
+  findById(id: String!): Opinion
+}
+
+type Mutation {
+  crearOpinion(recurso: String!): String
+  addValoracion(id: String!, email: String!, fecha: String!, calificacion: Int!, comentario: String): Boolean
+  deleteOpinion(id: String!): Boolean
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
