@@ -2,10 +2,12 @@ package com.ticarum.gestionsensores.servicio;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ticarum.gestionsensores.dominio.Historial;
 import com.ticarum.gestionsensores.dominio.Sensor;
 import com.ticarum.gestionsensores.dominio.TipoSensor;
 import com.ticarum.gestionsensores.repositorio.ISensorRepositorio;
@@ -45,6 +47,28 @@ public class SensorServicio implements ISensorServicio{
 	public boolean borrarSensor(Long id) {
 		return repositorio.delete(id);
 	}
+
+	@Override
+	public double obtenerSensor(Long id) {
+		Sensor sensor = repositorio.get(id);
+		System.out.println(sensor);
+		double valor = generarValor(sensor.getTipo());
+		sensor.getHistorico().add(new Historial(valor, sensor));
+		repositorio.update(sensor);
+		return valor;
+	}
+	
+	@Override
+	public List<Historial> obtenerHistorial(Long id) {
+		return repositorio.get(id).getHistorico();
+	}
+	
+	private double generarValor(TipoSensor tipo) {
+		double valor = new Random().nextDouble((tipo.getMax()-tipo.getMin()+1)+tipo.getMin());
+		return valor;
+	}
+
+	
 	
 	
 }

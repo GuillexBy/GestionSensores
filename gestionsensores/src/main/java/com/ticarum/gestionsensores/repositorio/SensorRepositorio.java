@@ -33,5 +33,15 @@ public class SensorRepositorio implements ISensorRepositorio{
 		}
 		else return false;
 	}
+
+	@Override
+	public Sensor get(Long id) {
+		return repositorio.findById(id).orElse(null);
+	}
+
+	@Override
+	public Sensor update(Sensor sensor) {
+		return repositorio.save(sensor);
+	}
 	
 }

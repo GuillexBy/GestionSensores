@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ticarum.gestionsensores.dominio.Historial;
 import com.ticarum.gestionsensores.dominio.Sensor;
 import com.ticarum.gestionsensores.dominio.TipoSensor;
 import com.ticarum.gestionsensores.servicio.ISensorServicio;
@@ -49,5 +50,16 @@ public class SensorControlador {
 			return ResponseEntity.ok().body("Sensor borrado correctamente");
 		}
 		return ResponseEntity.notFound().build();
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<String> obtenerSensor(@PathVariable("id") Long id){
+		double response = servicioSensor.obtenerSensor(id);
+		return ResponseEntity.ok().body("El valor del sensor consultado es: " + response);
+	}
+	
+	@GetMapping("/{id}/histórico")
+	public ResponseEntity<List<Historial>> obtenerHistorial(@PathVariable("id") Long id){
+		return ResponseEntity.ok(servicioSensor.obtenerHistorial(id));
 	}
 }

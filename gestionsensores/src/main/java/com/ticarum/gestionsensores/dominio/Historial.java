@@ -21,6 +21,8 @@ public class Historial {
 	@JoinColumn(name = "sensor_id", nullable = false)
 	private Sensor sensor;
 	
+	public Historial() {}
+	
 	public Historial(double valor, Sensor sensor) {
 		this.fecha = LocalDate.now();
 		this.valor = valor;
