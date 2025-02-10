@@ -18,5 +18,20 @@ public class SensorRepositorio implements ISensorRepositorio{
 		return repositorio.findAll();
 	}
 
+	@Override
+	public Sensor create(Sensor sensor) {
+		return repositorio.save(sensor);
+		
+	}
+	
+	@Override
+	public boolean delete(Long id) {
+//		repositorio.deleteById(id);
+		if (!repositorio.findById(id).isEmpty()) {
+			repositorio.deleteById(id);
+			return true;
+		}
+		else return false;
+	}
 	
 }

@@ -7,6 +7,7 @@ import com.ticarum.gestionsensores.dominio.TipoSensor;
 
 public interface ISensorServicio {
 
-	Sensor registroSensor();
+	List<TipoSensor> registroSensor();
 	List<Sensor> listaSensores();
+	boolean borrarSensor(Long id);
 }
