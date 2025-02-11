@@ -1,5 +1,6 @@
 package com.ticarum.gestionsensores.servicio;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -63,12 +64,22 @@ public class SensorServicio implements ISensorServicio{
 		return repositorio.get(id).getHistorico();
 	}
 	
+	@Override
+	public double calcularMedia(Long id, LocalDate fechaI, LocalDate fechaF) {
+		List<Historial>historico = repositorio.getHistorial(id, fechaI, fechaF);
+		System.out.println(historico);
+		double media = 0.0;
+		if(historico.isEmpty()) return media;
+		for (Historial historial : historico) {
+			media += historial.getValor();
+		}
+		media = media / historico.size();
+		return media;
+	}
+	
 	private double generarValor(TipoSensor tipo) {
 		double valor = new Random().nextDouble((tipo.getMax()-tipo.getMin()+1)+tipo.getMin());
 		return valor;
 	}
-
-	
-	
 	
 }

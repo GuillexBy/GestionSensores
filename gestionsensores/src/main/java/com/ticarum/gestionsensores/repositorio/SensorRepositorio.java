@@ -1,10 +1,12 @@
 package com.ticarum.gestionsensores.repositorio;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.ticarum.gestionsensores.dominio.Historial;
 import com.ticarum.gestionsensores.dominio.Sensor;
 
 @Repository
@@ -12,6 +14,8 @@ public class SensorRepositorio implements ISensorRepositorio{
 	
 	@Autowired
 	private RepositorioJPA repositorio;
+	@Autowired
+	private RepositorioHistorialJpa repositorioH;
 
 	@Override
 	public List<Sensor> getAll() {
@@ -42,6 +46,11 @@ public class SensorRepositorio implements ISensorRepositorio{
 	@Override
 	public Sensor update(Sensor sensor) {
 		return repositorio.save(sensor);
+	}
+	
+	@Override
+	public List<Historial> getHistorial(Long id, LocalDate fechaI, LocalDate fechaF) {
+		return repositorioH.findBySensor_IdAndFechaBetween(id, fechaI, fechaF);
 	}
 	
 }

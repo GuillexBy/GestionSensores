@@ -1,5 +1,6 @@
 package com.ticarum.gestionsensores.controlador;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,12 @@ public class SensorControlador {
 	public ResponseEntity<String> obtenerSensor(@PathVariable("id") Long id){
 		double response = servicioSensor.obtenerSensor(id);
 		return ResponseEntity.ok().body("El valor del sensor consultado es: " + response);
+	}
+	
+	@GetMapping("/{id}/media/{fechaInicio}/{fechaFin}")
+	public ResponseEntity<String> calcularMedia(@PathVariable("id") Long id, @PathVariable("fechaInicio") LocalDate fechaI, @PathVariable("fechaFin") LocalDate fechaF){
+		double media = servicioSensor.calcularMedia(id, fechaI, fechaF);
+		return ResponseEntity.ok().body("El valor medio registrado entre las fechas "+fechaI+" y "+fechaF+" es: "+ media);
 	}
 	
 	@GetMapping("/{id}/histórico")
