@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.ticarum.gestionsensores.dominio.Historial;
 import com.ticarum.gestionsensores.dominio.Sensor;
+import com.ticarum.gestionsensores.excepciones.GenericDatabaseException;
+import com.ticarum.gestionsensores.excepciones.SensorNotFoundException;
 
 @Repository
 public class SensorRepositorio implements ISensorRepositorio{
@@ -18,39 +20,63 @@ public class SensorRepositorio implements ISensorRepositorio{
 	private RepositorioHistorialJpa repositorioH;
 
 	@Override
-	public List<Sensor> getAll() {
-		return repositorio.findAll();
+	public List<Sensor> getAll() throws GenericDatabaseException {
+		try {
+			return repositorio.findAll();
+		} catch (Exception e) {
+			throw new GenericDatabaseException();
+		}
 	}
 
 	@Override
-	public Sensor create(Sensor sensor) {
-		return repositorio.save(sensor);
-		
+	public Sensor create(Sensor sensor) throws GenericDatabaseException {
+		try {
+			return repositorio.save(sensor);
+		} catch (Exception e) {
+			throw new GenericDatabaseException();
+		}
 	}
 	
 	@Override
-	public boolean delete(Long id) {
-//		repositorio.deleteById(id);
-		if (!repositorio.findById(id).isEmpty()) {
+	public boolean delete(Long id) throws SensorNotFoundException, GenericDatabaseException {
+		try {
+			repositorio.findById(id).orElseThrow(() -> new SensorNotFoundException(id));
 			repositorio.deleteById(id);
 			return true;
+		} catch (SensorNotFoundException e) {
+			throw new SensorNotFoundException(id);
+		} catch (Exception e) {
+			throw new GenericDatabaseException();
 		}
-		else return false;
 	}
 
 	@Override
-	public Sensor get(Long id) {
-		return repositorio.findById(id).orElse(null);
+	public Sensor get(Long id) throws SensorNotFoundException, GenericDatabaseException {
+			try {
+				return repositorio.findById(id).orElseThrow(() -> new SensorNotFoundException(id));
+			} catch (SensorNotFoundException e) {
+				throw new SensorNotFoundException(id);
+			} catch (Exception e) {
+				throw new GenericDatabaseException();
+			}
 	}
 
 	@Override
-	public Sensor update(Sensor sensor) {
-		return repositorio.save(sensor);
+	public Sensor update(Sensor sensor) throws GenericDatabaseException {
+		try {
+			return repositorio.save(sensor);
+		} catch (Exception e) {
+			throw new GenericDatabaseException();
+		}
 	}
 	
 	@Override
-	public List<Historial> getHistorial(Long id, LocalDate fechaI, LocalDate fechaF) {
-		return repositorioH.findBySensor_IdAndFechaBetween(id, fechaI, fechaF);
+	public List<Historial> getHistorial(Long id, LocalDate fechaI, LocalDate fechaF) throws GenericDatabaseException {
+		try {
+			return repositorioH.findBySensor_IdAndFechaBetween(id, fechaI, fechaF);
+		} catch (Exception e) {
+			throw new GenericDatabaseException();
+		}
 	}
 	
 }

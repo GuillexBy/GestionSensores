@@ -6,13 +6,16 @@ import java.util.List;
 import com.ticarum.gestionsensores.dominio.Historial;
 import com.ticarum.gestionsensores.dominio.Sensor;
 import com.ticarum.gestionsensores.dominio.TipoSensor;
+import com.ticarum.gestionsensores.excepciones.GenericDatabaseException;
+import com.ticarum.gestionsensores.excepciones.HistorialNotFoundException;
+import com.ticarum.gestionsensores.excepciones.SensorNotFoundException;
 
 public interface ISensorServicio {
 
-	List<TipoSensor> registroSensor();
-	List<Sensor> listaSensores();
-	boolean borrarSensor(Long id);
-	double obtenerSensor(Long id);
-	List<Historial> obtenerHistorial(Long id);
-	double calcularMedia(Long id, LocalDate fechaI, LocalDate fechaF);
+	List<TipoSensor> registroSensor() throws GenericDatabaseException;
+	List<Sensor> listaSensores() throws GenericDatabaseException;
+	boolean borrarSensor(Long id) throws GenericDatabaseException, SensorNotFoundException;
+	double obtenerSensor(Long id) throws SensorNotFoundException, GenericDatabaseException;
+	List<Historial> obtenerHistorial(Long id) throws SensorNotFoundException, GenericDatabaseException;
+	double calcularMedia(Long id, LocalDate fechaI, LocalDate fechaF) throws GenericDatabaseException, HistorialNotFoundException;
 }

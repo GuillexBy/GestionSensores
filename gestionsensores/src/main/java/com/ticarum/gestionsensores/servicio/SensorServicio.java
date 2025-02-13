@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import com.ticarum.gestionsensores.dominio.Historial;
 import com.ticarum.gestionsensores.dominio.Sensor;
 import com.ticarum.gestionsensores.dominio.TipoSensor;
+import com.ticarum.gestionsensores.excepciones.GenericDatabaseException;
+import com.ticarum.gestionsensores.excepciones.HistorialNotFoundException;
+import com.ticarum.gestionsensores.excepciones.SensorNotFoundException;
 import com.ticarum.gestionsensores.repositorio.ISensorRepositorio;
 
 @Service
@@ -20,7 +23,7 @@ public class SensorServicio implements ISensorServicio{
 	private ISensorRepositorio repositorio; 
 
 	@Override
-	public List<TipoSensor> registroSensor() {
+	public List<TipoSensor> registroSensor() throws GenericDatabaseException {
 		List<Sensor> sensores = repositorio.getAll();
 		LinkedList<TipoSensor> listaSensores = new LinkedList<TipoSensor>();
 //		LinkedList<Sensor> sensores = new LinkedList<Sensor>();
@@ -28,7 +31,7 @@ public class SensorServicio implements ISensorServicio{
 //			Sensor sensor = new Sensor(tipo);
 			if (!sensores.stream().anyMatch(s -> s.getTipo().equals(tipo))) {
 				Sensor response = repositorio.create(new Sensor(tipo));
-				System.out.println(response.getTipo());
+				//System.out.println(response.getTipo());
 //				sensores.add(response);
 				listaSensores.add(response.getTipo());	
 			}
@@ -37,7 +40,7 @@ public class SensorServicio implements ISensorServicio{
 	}
 
 	@Override
-	public List<Sensor> listaSensores() {
+	public List<Sensor> listaSensores() throws GenericDatabaseException {
 		// TODO Auto-generated method stub
 		List<Sensor> sensores = repositorio.getAll();
 		System.out.println("Lista de Sensores registrados: " + sensores);
@@ -45,12 +48,12 @@ public class SensorServicio implements ISensorServicio{
 	}
 
 	@Override
-	public boolean borrarSensor(Long id) {
+	public boolean borrarSensor(Long id) throws GenericDatabaseException, SensorNotFoundException {
 		return repositorio.delete(id);
 	}
 
 	@Override
-	public double obtenerSensor(Long id) {
+	public double obtenerSensor(Long id) throws SensorNotFoundException, GenericDatabaseException {
 		Sensor sensor = repositorio.get(id);
 		System.out.println(sensor);
 		double valor = generarValor(sensor.getTipo());
@@ -60,16 +63,16 @@ public class SensorServicio implements ISensorServicio{
 	}
 	
 	@Override
-	public List<Historial> obtenerHistorial(Long id) {
+	public List<Historial> obtenerHistorial(Long id) throws SensorNotFoundException, GenericDatabaseException {
 		return repositorio.get(id).getHistorico();
 	}
 	
 	@Override
-	public double calcularMedia(Long id, LocalDate fechaI, LocalDate fechaF) {
+	public double calcularMedia(Long id, LocalDate fechaI, LocalDate fechaF) throws GenericDatabaseException, HistorialNotFoundException {
 		List<Historial>historico = repositorio.getHistorial(id, fechaI, fechaF);
 		System.out.println(historico);
 		double media = 0.0;
-		if(historico.isEmpty()) return media;
+		if(historico.isEmpty()) throw new HistorialNotFoundException(id);
 		for (Historial historial : historico) {
 			media += historial.getValor();
 		}
