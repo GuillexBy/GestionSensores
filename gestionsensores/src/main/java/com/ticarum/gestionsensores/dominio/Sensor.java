@@ -55,5 +55,9 @@ public class Sensor {
 	public List<Historial> getHistorico() {
 		return historico;
 	}
+
+	public void setHistorico(List<Historial> historico) {
+		this.historico = historico;
+	}
 	
 }
